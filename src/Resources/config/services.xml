@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- SERVICES -->
+        <service id="cream_io_image_gallery.service.gallery_service" class="CreamIO\ImageGalleryBundle\Service\GalleryService">
+            <argument type="service" id="doctrine.orm.default_entity_manager" />
+            <argument type="service" id="cream_io_base.apiservice" />
+        </service>
+        <service id="CreamIO\ImageGalleryBundle\Service\GalleryService" alias="cream_io_image_gallery.service.gallery_service" />
+        <!-- REPOSITORIES -->
+        <service id="CreamIO\ImageGalleryBundle\Repository\GalleryCategoryRepository" public="false">
+            <tag name="doctrine.repository_service" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <service id="CreamIO\ImageGalleryBundle\Repository\GalleryImageRepository" public="false">
+            <tag name="doctrine.repository_service" />
+            <argument type="service" id="doctrine" />
+        </service>
+        <!-- CONTROLLERS -->
+        <service id="cream_io_image_gallery.controller.gallery_category_controller" class="CreamIO\ImageGalleryBundle\Controller\GalleryCategoryController" public="true">
+            <argument type="service" id="validator" />
+            <argument type="service" id="cream_io_base.apiservice" />
+            <argument type="service" id="cream_io_image_gallery.service.gallery_service" />
+        </service>
+        <service id="CreamIO\ImageGalleryBundle\Controller\GalleryCategoryController" alias="cream_io_image_gallery.controller.gallery_category_controller" public="true" />
+        <service id="cream_io_image_gallery.controller.gallery_image_controller" class="CreamIO\ImageGalleryBundle\Controller\GalleryImageController" public="true">
+            <argument type="service" id="validator" />
+            <argument type="service" id="cream_io_base.apiservice" />
+            <argument type="service" id="cream_io_image_gallery.service.gallery_service" />
+            <argument type="service" id="cream_io_upload.uploaderservice" />
+        </service>
+        <service id="CreamIO\ImageGalleryBundle\Controller\GalleryImageController" alias="cream_io_image_gallery.controller.gallery_image_controller" public="true" />
+    </services>
+</container>

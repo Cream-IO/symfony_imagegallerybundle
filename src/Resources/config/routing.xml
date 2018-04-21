@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing
+        http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="cream_io_image_gallery.category.create" path="/category" methods="POST" controller="cream_io_image_gallery.controller.gallery_category_controller:create" />
+    <route id="cream_io_image_gallery.category.details_list" path="/category" methods="GET" controller="cream_io_image_gallery.controller.gallery_category_controller:detailsList" />
+    <route id="cream_io_image_gallery.category.details" path="/category/{id}" methods="GET" controller="cream_io_image_gallery.controller.gallery_category_controller:details" />
+    <route id="cream_io_image_gallery.category.delete" path="/category/{id}" methods="DELETE" controller="cream_io_image_gallery.controller.gallery_category_controller:delete" />
+    <route id="cream_io_image_gallery.category.patch" path="/category/{id}" methods="PATCH" controller="cream_io_image_gallery.controller.gallery_category_controller:patch" />
+
+    <route id="cream_io_image_gallery.image.create" path="/image" methods="POST" controller="cream_io_image_gallery.controller.gallery_image_controller:create" />
+    <route id="cream_io_image_gallery.image.details" path="/image/{id}" methods="GET" controller="cream_io_image_gallery.controller.gallery_image_controller:details" />
+    <route id="cream_io_image_gallery.image.delete" path="/image/{id}" methods="DELETE" controller="cream_io_image_gallery.controller.gallery_image_controller:delete" />
+    <route id="cream_io_image_gallery.image.patch" path="/image/{id}" methods="PATCH" controller="cream_io_image_gallery.controller.gallery_image_controller:patch" />
+</routes>
