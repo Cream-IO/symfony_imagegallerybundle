@@ -43,7 +43,7 @@
   },
   "autoload": {
     "psr-4": {
-      "CreamIO\\GalleryImageBundle\\": "src/"
+      "CreamIO\\ImageGalleryBundle\\": "src/"
     }
   },
   "extra": {
