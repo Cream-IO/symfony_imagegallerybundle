@@ -146,6 +146,7 @@ class GalleryCategoryController extends Controller
     public function delete(Request $request, int $id): JsonResponse
     {
         $em = $this->getDoctrine()->getManager();
+        /** @var GalleryCategory $category */
         $category = $em->getRepository(GalleryCategory::class)->find($id);
         if (null === $category) {
             throw $this->apiService->error(Response::HTTP_NOT_FOUND, APIError::RESOURCE_NOT_FOUND);

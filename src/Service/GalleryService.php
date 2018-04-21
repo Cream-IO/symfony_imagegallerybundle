@@ -68,6 +68,7 @@ class GalleryService
     public function getCategoriesList(): array
     {
         $repo = $this->em->getRepository(GalleryCategory::class);
+        /** @var GalleryCategory[] $categoriesList */
         $categoriesList = $repo->findAll();
         $finalCategoriesList = [];
         foreach ($categoriesList as $category) {

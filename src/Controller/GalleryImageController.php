@@ -73,6 +73,7 @@ class GalleryImageController extends Controller
      *
      * @Route("", name="image_upload", methods="POST")
      *
+     * @param Request $request Handled HTTP request
      *
      * @throws \LogicException
      * @throws APIException    If image does not exist
