@@ -75,7 +75,7 @@ class GalleryCategoryController extends Controller
         $em->persist($category);
         $em->flush();
 
-        return $this->apiService->successWithResults($category, Response::HTTP_CREATED, $category->getId(), $request, $this->serializer);
+        return $this->apiService->successWithoutResults($category->getId(), Response::HTTP_CREATED, $request);
     }
 
     /**
