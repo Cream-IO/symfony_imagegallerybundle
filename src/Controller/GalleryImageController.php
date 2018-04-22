@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class GalleryImageController.
@@ -25,11 +24,6 @@ class GalleryImageController extends Controller
     private const ACCEPTED_CONTENT_TYPE_PATCH = 'application/json';
     private const ACCEPTED_CONTENT_TYPE_POST = 'multipart/form-data';
     private const INVALID_POST_CONTENT_TYPE = 'Invalid content type, please send multipart/form-data content';
-
-    /**
-     * @var ValidatorInterface Injected validator service
-     */
-    private $validator;
 
     /**
      * @var APIService Injected API service from base bundle
@@ -87,7 +81,7 @@ class GalleryImageController extends Controller
         /** @var GalleryImage $uploadedFile */
         $uploadedFile = $this->uploader->handleUpload($request, false, GalleryImage::class, 'file');
         $uploadedFile->setCategory($category);
-        $this->uploader->validateEntity($uploadedFile);
+        $this->apiService->validateEntity($uploadedFile);
         $em = $this->getDoctrine()->getManager();
         $em->persist($uploadedFile);
         $em->flush();
@@ -168,7 +162,7 @@ class GalleryImageController extends Controller
         }
         $datas = $request->getContent();
         $image = $this->galleryService->mergeImageFromJSON($image, $datas);
-        $this->uploader->validateEntity($image);
+        $this->apiService->validateEntity($image);
         $this->getDoctrine()->getManager()->flush();
 
         return $this->apiService->successWithoutResults($id, Response::HTTP_OK, $request);

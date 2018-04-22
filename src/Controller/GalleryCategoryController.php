@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class GalleryCategoryController.
@@ -24,11 +23,6 @@ class GalleryCategoryController extends Controller
 {
     private const LIST_RESULTS_FOR_IDENTIFIER = 'gallery-categories-list';
     private const ACCEPTED_CONTENT_TYPE = 'application/json';
-
-    /**
-     * @var ValidatorInterface Injected validator service
-     */
-    private $validator;
 
     /**
      * @var APIService Injected API service from base bundle
@@ -48,13 +42,11 @@ class GalleryCategoryController extends Controller
     /**
      * GalleryCategoryController constructor.
      *
-     * @param ValidatorInterface $validator      Injected validator service
      * @param APIService         $apiService     Injected API service from base bundle
      * @param GalleryService     $galleryService Inject gallery service
      */
-    public function __construct(ValidatorInterface $validator, APIService $apiService, GalleryService $galleryService)
+    public function __construct(APIService $apiService, GalleryService $galleryService)
     {
-        $this->validator = $validator;
         $this->apiService = $apiService;
         $this->galleryService = $galleryService;
         $this->serializer = $galleryService->generateSerializer();
@@ -78,10 +70,7 @@ class GalleryCategoryController extends Controller
         $datas = $request->getContent();
         /** @var GalleryCategory $category */
         $category = $this->galleryService->generateSerializer()->deserialize($datas, GalleryCategory::class, 'json');
-        $validationErrors = $this->validator->validate($category);
-        if (\count($validationErrors) > 0) {
-            throw $this->apiService->postError($validationErrors);
-        }
+        $this->apiService->validateEntity($category);
         $em = $this->getDoctrine()->getManager();
         $em->persist($category);
         $em->flush();
@@ -184,10 +173,7 @@ class GalleryCategoryController extends Controller
         }
         $datas = $request->getContent();
         $category = $this->galleryService->mergeCategoryFromJSON($category, $datas);
-        $validationErrors = $this->validator->validate($category);
-        if (\count($validationErrors) > 0) {
-            throw $this->apiService->postError($validationErrors);
-        }
+        $this->apiService->validateEntity($category);
         $this->getDoctrine()->getManager()->flush();
 
         return $this->apiService->successWithoutResults($id, Response::HTTP_OK, $request);
