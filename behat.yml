@@ -1,0 +1,36 @@
+default:
+  calls:
+    error_reporting: 16383
+  suites:
+    default:
+      contexts:
+        - FeatureContext:
+            kernel: '@kernel'
+        - Behat\MinkExtension\Context\MinkContext
+        - behatch:context:json
+        - behatch:context:rest
+        - rdx\behatvars\BehatVariablesContext
+        - CoverageContext
+  formatters:
+    html:
+      output_path: docs/behat_report
+    pretty: ~
+  extensions:
+    Behat\Symfony2Extension:
+      kernel:
+        bootstrap: features/bootstrap/bootstrap.php
+        class: App\Kernel
+    Behat\MinkExtension:
+      base_url: "http://example.com/"
+      sessions:
+        default:
+          symfony2: ~
+    Behatch\Extension: ~
+    rdx\behatvars\BehatVariablesExtension: ~
+    emuse\BehatHTMLFormatter\BehatHTMLFormatterExtension:
+      name: html
+      renderer: Twig
+      file_name: index
+      print_args: true
+      print_outp: true
+      loop_break: true
