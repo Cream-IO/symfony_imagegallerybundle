@@ -85,8 +85,9 @@ class GalleryImageController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($uploadedFile);
         $em->flush();
+        $redirectionUrl = $this->generateUrl('cream_io_image_gallery.category.details', ['id' => $uploadedFile->getId()]);
 
-        return $this->apiService->successWithoutResults($uploadedFile->getId(), Response::HTTP_OK, $request);
+        return $this->apiService->successWithoutResultsRedirected($uploadedFile->getId(), $request, Response::HTTP_CREATED, $redirectionUrl);
     }
 
     /**

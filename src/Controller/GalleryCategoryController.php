@@ -74,8 +74,9 @@ class GalleryCategoryController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($category);
         $em->flush();
+        $redirectionUrl = $this->generateUrl('cream_io_image_gallery.image.details', ['id' => $category->getId()]);
 
-        return $this->apiService->successWithoutResults($category->getId(), Response::HTTP_CREATED, $request);
+        return $this->apiService->successWithoutResultsRedirected($category->getId(), $request, Response::HTTP_CREATED, $redirectionUrl);
     }
 
     /**
