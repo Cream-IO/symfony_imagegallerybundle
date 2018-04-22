@@ -27,7 +27,6 @@
         </service>
         <service id="CreamIO\ImageGalleryBundle\Controller\GalleryCategoryController" alias="cream_io_image_gallery.controller.gallery_category_controller" public="true" />
         <service id="cream_io_image_gallery.controller.gallery_image_controller" class="CreamIO\ImageGalleryBundle\Controller\GalleryImageController" public="true">
-            <argument type="service" id="validator" />
             <argument type="service" id="cream_io_base.apiservice" />
             <argument type="service" id="cream_io_image_gallery.service.gallery_service" />
             <argument type="service" id="cream_io_upload.uploaderservice" />

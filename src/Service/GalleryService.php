@@ -7,6 +7,7 @@ use CreamIO\BaseBundle\Service\APIService;
 use CreamIO\ImageGalleryBundle\Entity\GalleryCategory;
 use CreamIO\ImageGalleryBundle\Entity\GalleryImage;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -65,7 +66,12 @@ class GalleryService
         return new Serializer($normalizers, $encoders);
     }
 
-    public function getCategoriesList(): array
+    /**
+     * Gets all categories from database, and return it formatted in a array where the key is the id of the category
+     *
+     * @return array
+     */
+    public function formatCategoriesList(): array
     {
         $repo = $this->em->getRepository(GalleryCategory::class);
         /** @var GalleryCategory[] $categoriesList */
@@ -76,6 +82,28 @@ class GalleryService
         }
 
         return $finalCategoriesList;
+    }
+
+    /**
+     * Takes parameter bag with datas comming from client to post image and finds the category form the given category id
+     *
+     * @param ParameterBag $paramBag Datas comming from client request
+     *
+     * @return GalleryCategory
+     */
+    private function getCategoryFromClientDatasPost(ParameterBag $paramBag): GalleryCategory
+    {
+        if (false === $paramBag->has('category-id')) {
+            throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::NO_CATEGORY_ID_PROVIDED_ERROR);
+        }
+        $categoryRepo = $this->em->getRepository(GalleryCategory::class);
+        $category = $categoryRepo->find($paramBag->get('category-id'));
+        if (null === $category) {
+            throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::WRONG_CATEGORY_ID_ERROR);
+        }
+        $paramBag->remove('category-id');
+
+        return $category;
     }
 
     /**
@@ -92,15 +120,7 @@ class GalleryService
         if (true === $request->request->has('category')) {
             throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::CANT_PROVIDE_CATEGORY_ERROR);
         }
-        if (false === $request->request->has('category-id')) {
-            throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::NO_CATEGORY_ID_PROVIDED_ERROR);
-        }
-        $categoryRepo = $this->em->getRepository(GalleryCategory::class);
-        $category = $categoryRepo->find($request->request->get('category-id'));
-        if (null === $category) {
-            throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::WRONG_CATEGORY_ID_ERROR);
-        }
-        $request->request->remove('category-id');
+        $category = $this->getCategoryFromClientDatasPost($request->request);
 
         return $category;
     }
@@ -123,6 +143,26 @@ class GalleryService
     }
 
     /**
+     * Takes array with datas comming from client to patch image and finds the category form the given category id
+     *
+     * @param array $datas Datas comming from client
+     *
+     * @return GalleryCategory
+     */
+    private function getCategoryFromClientDatasPatch(array &$datas): GalleryCategory
+    {
+        $categoryId = $datas['category-id'];
+        $categoryRepo = $this->em->getRepository(GalleryCategory::class);
+        $category = $categoryRepo->find($categoryId);
+        if (null === $category) {
+            throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::WRONG_CATEGORY_ID_ERROR);
+        }
+        unset($datas['category-id']);
+
+        return $category;
+    }
+
+    /**
      * Merge existing gallery image with new values incomming from client.
      *
      * @param GalleryImage $image Category to update
@@ -139,15 +179,7 @@ class GalleryService
             throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::CANT_PROVIDE_CATEGORY_ERROR);
         }
         if (true === \array_key_exists('category-id', $datasArray)) {
-            $categoryId = $datasArray['category-id'];
-            unset($datasArray['category-id']);
-            $categoryRepo = $this->em->getRepository(GalleryCategory::class);
-            $category = $categoryRepo->find($categoryId);
-            if (null === $category) {
-                throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::WRONG_CATEGORY_ID_ERROR);
-            }
-
-            $datasArray['category'] = $category;
+            $datasArray['category'] = $this->getCategoryFromClientDatasPatch($datasArray);
         }
         $serializer = $this->generateSerializer();
         $image = $serializer->denormalize($datasArray, GalleryImage::class, null, ['object_to_populate' => $image]);

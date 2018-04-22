@@ -102,7 +102,7 @@ class GalleryCategoryController extends Controller
      */
     public function detailsList(Request $request): JsonResponse
     {
-        $categoriesList = $this->galleryService->getCategoriesList();
+        $categoriesList = $this->galleryService->formatCategoriesList();
 
         return $this->apiService->successWithResults(['gallery-categories' => $categoriesList], Response::HTTP_OK, self::LIST_RESULTS_FOR_IDENTIFIER, $request, $this->serializer);
     }

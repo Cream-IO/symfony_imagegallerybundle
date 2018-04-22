@@ -54,14 +54,12 @@ class GalleryImageController extends Controller
     /**
      * GalleryImageController constructor.
      *
-     * @param ValidatorInterface $validator      Injected validator service
      * @param APIService         $apiService     Injected API service from base bundle
      * @param GalleryService     $galleryService Injected gallery service
      * @param UploaderService    $uploader       Injected uploader service
      */
-    public function __construct(ValidatorInterface $validator, APIService $apiService, GalleryService $galleryService, UploaderService $uploader)
+    public function __construct(APIService $apiService, GalleryService $galleryService, UploaderService $uploader)
     {
-        $this->validator = $validator;
         $this->apiService = $apiService;
         $this->galleryService = $galleryService;
         $this->uploader = $uploader;
@@ -170,10 +168,7 @@ class GalleryImageController extends Controller
         }
         $datas = $request->getContent();
         $image = $this->galleryService->mergeImageFromJSON($image, $datas);
-        $validationErrors = $this->validator->validate($image);
-        if (\count($validationErrors) > 0) {
-            throw $this->apiService->postError($validationErrors);
-        }
+        $this->uploader->validateEntity($image);
         $this->getDoctrine()->getManager()->flush();
 
         return $this->apiService->successWithoutResults($id, Response::HTTP_OK, $request);
