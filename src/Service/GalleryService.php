@@ -91,7 +91,7 @@ class GalleryService
      *
      * @return GalleryCategory
      */
-    private function getCategoryFromParamBag(ParameterBag $paramBag): GalleryCategory
+    private function fetchCategoryFromParamBag(ParameterBag $paramBag): GalleryCategory
     {
         if (false === $paramBag->has('category-id')) {
             throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::NO_CATEGORY_ID_PROVIDED_ERROR);
@@ -120,7 +120,7 @@ class GalleryService
         if (true === $request->request->has('category')) {
             throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::CANT_PROVIDE_CATEGORY_ERROR);
         }
-        $category = $this->getCategoryFromParamBag($request->request);
+        $category = $this->fetchCategoryFromParamBag($request->request);
 
         return $category;
     }
@@ -149,7 +149,7 @@ class GalleryService
      *
      * @return GalleryCategory
      */
-    private function getCategoryFromArray(array &$datas): GalleryCategory
+    private function fetchCategoryFromArray(array &$datas): GalleryCategory
     {
         $categoryId = $datas['category-id'];
         $categoryRepo = $this->em->getRepository(GalleryCategory::class);
@@ -179,7 +179,7 @@ class GalleryService
             throw $this->apiService->error(Response::HTTP_BAD_REQUEST, self::CANT_PROVIDE_CATEGORY_ERROR);
         }
         if (true === \array_key_exists('category-id', $datasArray)) {
-            $datasArray['category'] = $this->getCategoryFromArray($datasArray);
+            $datasArray['category'] = $this->fetchCategoryFromArray($datasArray);
         }
         $serializer = $this->generateSerializer();
         $image = $serializer->denormalize($datasArray, GalleryImage::class, null, ['object_to_populate' => $image]);
