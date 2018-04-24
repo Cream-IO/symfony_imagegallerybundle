@@ -19,6 +19,8 @@ Installation
 
 Require the bundle from a symfony 4 application.
 
+Make the base bundle configuration according to the [documentation](https://github.com/Cream-IO/symfony_basebundle/blob/master/README.md).
+
 Add the routes to your application by adding to `config/routes.yaml` the following lines:
 
 ```yaml
